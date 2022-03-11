@@ -1,0 +1,3 @@
+name: csharp-energy-aware-queries
+version: 0.0.1
+libraryPathDependencies: codeql/csharp-all
