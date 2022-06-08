@@ -39,8 +39,8 @@ int selfDependencyCount(Method source) {
 predicate dependsHighlyOn(Method source, RefType target, int selfCount, int depCount) {
   depCount = dependencyCount(source, target) and
   selfCount = selfDependencyCount(source) and
-  depCount > 2 * selfCount and
-  depCount > 4
+  depCount >= 2 * selfCount and
+  depCount >= 4
 }
 
 predicate query(Method m, RefType targetType, int selfCount, int depCount) {
@@ -56,13 +56,13 @@ predicate query(Method m, RefType targetType, int selfCount, int depCount) {
       targetType.getABaseType*().getUnboundDeclaration() = sourceType
     ) and
     // Do not move between nested types
-    not (sourceType.getDeclaringType*() = targetType or targetType.getDeclaringType*() = sourceType) and
+    not (sourceType.getDeclaringType*() = targetType or targetType.getDeclaringType*() = sourceType) //and
     // Check that the target type already depends on every type used by the method
-    forall(RefType dependency | methodDependsOn(m, dependency) |
+    /*forall(RefType dependency | methodDependsOn(m, dependency) |
       dependsOn(targetType, dependency) or
       targetType = dependency or
       dependency.getNamespace().hasName("System")
-    )
+    )*/
   )
 }
 

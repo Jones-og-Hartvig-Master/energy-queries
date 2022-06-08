@@ -11,23 +11,23 @@
 
 import csharp
 
-predicate hasMultipleIfstmt(BlockStmt m, int nIfstmt) {
-    nIfstmt = count(Stmt s | s = m.getAChildStmt() and s instanceof IfStmt) and
+predicate hasMultipleIfstmt(BlockStmt bs, int nIfstmt) {
+    nIfstmt = count(Stmt s | s = bs.getAChildStmt() and s instanceof IfStmt) and
     nIfstmt > 1
 }
 
-predicate sameConditionals(BlockStmt m) {
+predicate sameConditionals(BlockStmt bs) {
     exists(
         Stmt s, Stmt ss | 
-        s = m.getAChildStmt() and s instanceof IfStmt and
-        ss = m.getAChildStmt() and ss instanceof IfStmt and
+        s = bs.getAChildStmt() and s instanceof IfStmt and
+        ss = bs.getAChildStmt() and ss instanceof IfStmt and
         s.getLocation().toString() != ss.getLocation().toString() and 
-        s.(IfStmt).getCondition().toString() = ss.(IfStmt).getCondition().toString())
+        s.(IfStmt).getCondition().toString() = ss.(IfStmt).getCondition().toString())     
 }
 
-from Method m, int nIfstmt
+from BlockStmt bs, int nIfstmt
 where
-    hasMultipleIfstmt(m.getBody(), nIfstmt) and
-    sameConditionals(m.getBody())
-select m,
-        "Method " + m.getName() + " implements the same conditional statement in multiple locations within the same scope."
+    hasMultipleIfstmt(bs, nIfstmt) and
+    sameConditionals(bs)
+select bs,
+        "Method " + bs.getEnclosingCallable().getName() + " implements the same conditional statement in multiple locations within the same scope."
